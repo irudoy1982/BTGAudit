@@ -1399,7 +1399,7 @@ if st.session_state.generation_state == "idle":
 
         for step in steps:
 
-            log_prefixes = [
+log_prefixes = [
     "[CORE]",
     "[SCAN]",
     "[MATRIX]",
