@@ -1413,21 +1413,21 @@ active_logs.append(
     f"{time.strftime('%H:%M:%S')} | {step}"
 )
 
-            if len(active_logs) > 4:
-                active_logs.pop(0)
+        if len(active_logs) > 4:
+            active_logs.pop(0)
 
-            console_placeholder.markdown(
-                '<div class="cyber-log-box">' +
-                "".join([f'<div>▶ {line}</div>' for line in active_logs]) +
-                '</div>',
-                unsafe_allow_html=True
-            )
+        console_placeholder.markdown(
+            '<div class="cyber-log-box">' +
+            "".join([f'<div>▶ {line}</div>' for line in active_logs]) +
+            '</div>',
+            unsafe_allow_html=True
+        )
 
-            progress += random.randint(5, 9)
+        progress += random.randint(5, 9)
 
-            progress_bar.progress(min(progress, 88))
+        progress_bar.progress(min(progress, 88))
 
-            time.sleep(random.uniform(0.7, 1.4))
+        time.sleep(random.uniform(0.7, 1.4))
 
 
         
