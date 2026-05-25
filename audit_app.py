@@ -1526,7 +1526,7 @@ if st.session_state.generation_state == "heavy_ai":
 # --- СЦЕНАРИЙ 3: ВЫВОД ГОТОВОГО РЕЗУЛЬТАТА ---
 if st.session_state.generation_state == "finalized":
     
-    st.balloons()
+    
     st.success("🎉 Экспертный отчет успешно сформирован и проверен системой контроля качества BTG Consulting!")
     
     st.download_button(
