@@ -1357,14 +1357,23 @@ if st.session_state.generation_state == "idle":
 
         <div class="cyber-alert-box">
 
-            ⏳ Выполняется глубокий анализ инфраструктуры.<br>
-            Формирование отчета может занять до 3 минут.<br><br>
+    <div style="font-size:18px; margin-bottom:10px;">
+        🛡️ BTG Security Assessment Engine
+    </div>
 
-            <span style="color:red;">
-            НЕ ЗАКРЫВАЙТЕ И НЕ ОБНОВЛЯЙТЕ СТРАНИЦУ
-            </span>
+    <div style="font-size:14px; line-height:1.6;">
 
-        </div>
+        Выполняется комплексный анализ ИТ-инфраструктуры,<br>
+        систем информационной безопасности и уровня зрелости процессов.
+
+        <br><br>
+
+        Среднее время формирования executive-отчета:
+        <b>60–180 секунд</b>
+
+    </div>
+
+</div>
 
         """, unsafe_allow_html=True)
 
@@ -1378,7 +1387,7 @@ if st.session_state.generation_state == "idle":
             "Проверка backup resilience...",
             "Расчет cybersecurity maturity...",
             "Построение security domains...",
-            "AI анализ рисков...",
+            "Глубокий анализ рисков...",
             "Формирование executive summary...",
             "Генерация XLSX отчета...",
             "Финализация артефактов..."
@@ -1390,9 +1399,19 @@ if st.session_state.generation_state == "idle":
 
         for step in steps:
 
-            active_logs.append(
-                f"[{time.strftime('%H:%M:%S')}] {step}"
-            )
+            log_prefixes = [
+    "[CORE]",
+    "[SCAN]",
+    "[MATRIX]",
+    "[RISK]",
+    "[ANALYTICS]",
+    "[ENGINE]"
+]
+
+active_logs.append(
+    f"{random.choice(log_prefixes)} "
+    f"{time.strftime('%H:%M:%S')} | {step}"
+)
 
             if len(active_logs) > 4:
                 active_logs.pop(0)
@@ -1454,7 +1473,7 @@ if st.session_state.generation_state == "preparing":
 if st.session_state.generation_state == "heavy_ai":
     
     # Этот текст и анимация будут гореть параллельно с фактами сверху
-    with st.spinner("🤖 ИИ (Gemini API) сопоставляет ваши данные с требованиями ISO 27001 / NIST и генерирует рекомендации..."):
+    with st.spinner("Корреляция инфраструктурных данных и построение рекомендаций безопасности..."):
         
         # Подготовка данных перед передачей
         results = data.copy()
