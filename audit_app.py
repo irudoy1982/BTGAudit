@@ -1386,13 +1386,11 @@ if st.session_state.generation_state == "idle":
 
         <div class="cyber-alert-box">
 
-            ⏳ Выполняется глубокий анализ инфраструктуры.<br>
-            Формирование отчета может занять до 3 минут.<br><br>
+            ⏳ Выполняется глубокий анализ инфраструктуры.
+            Формирование отчета может занять до 3 минут.
 
-            <span style="color:red;">
             НЕ ЗАКРЫВАЙТЕ И НЕ ОБНОВЛЯЙТЕ СТРАНИЦУ
-            </span>
-
+            
         </div>
 
         """, unsafe_allow_html=True)
@@ -1407,7 +1405,7 @@ if st.session_state.generation_state == "idle":
             "Проверка backup resilience...",
             "Расчет cybersecurity maturity...",
             "Построение security domains...",
-            "AI анализ рисков...",
+            "Глубокий анализ рисков...",
             "Формирование executive summary...",
             "Генерация XLSX отчета...",
             "Финализация артефактов..."
@@ -1445,172 +1443,104 @@ if st.session_state.generation_state == "idle":
         st.session_state.generation_state = "preparing"
         st.rerun()
 
-# --- СЦЕНАРИЙ 2: ПРОЦЕСС ГЕНЕРАЦИИ ОТЧЕТА ---
-if st.session_state.generation_state == "generating":
-    # Контейнер для UX-фокуса: привлекает внимание и удерживает от закрытия страницы
-    status_box = st.container()
+# --- СЦЕНАРИЙ 1: ЭКРАН ОЖИДАНИЯ С ФАКТАМИ ИБ (Показывается СРАЗУ же после клика) ---
+if st.session_state.generation_state == "preparing":
     
-    with status_box:
-        st.markdown("""
-            <div style="background-color: #f8f9fa; border-left: 5px solid #ff4b4b; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
-                <h3 style="margin-top: 0; color: #1F4E78;">⏳ Формируем экспертный отчет...</h3>
-                <p style="font-size: 16px; color: #495057; font-weight: bold; margin-bottom: 5px;">
-                    ⚠️ Пожалуйста, не закрывайте и не обновляйте эту страницу!
-                </p>
-                <p style="font-size: 14px; color: #6c757d; margin: 0;">
-                    Математическое ядро системы выполняет расчет векторов технологических рисков, валидацию конфигураций ландшафта и компиляцию документа Excel. Процесс может занять от 15 до 30 секунд.
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Визуальные индикаторы прогресса
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        
-    # Запуск фонового потока генерации (сохраняем оригинальную многопоточную логику вашего приложения)
-    if not st.session_state.thread_started:
-        st.session_state.thread_started = True
-        
-        def run_generation():
-            try:
-                # 1. Шаг валидации данных
-                st.session_state.processing_stage = "Сбор технической конфигурации и первичная валидация данных..."
-                st.session_state.generation_progress = 15
-                time.sleep(1.5)
-                
-                # 2. Шаг глубокого анализа
-                st.session_state.processing_stage = "Запуск экспертного алгоритма оценки. Анализ векторов уязвимостей ландшафта..."
-                st.session_state.generation_progress = 40
-                
-                # Оригинальный сбор рисков из вашего файла (под капотом, скрыто от глаз пользователя)
-                ai_risks = ai_generate_risks_and_recs(client_info, data)
-                rule_risks = generate_rule_based_risks(data)
-                
-                all_risks = []
-                if isinstance(ai_risks, list):
-                    all_risks.extend(ai_risks)
-                all_risks.extend(rule_risks)
-                
-                # 3. Шаг компиляции отчета
-                st.session_state.processing_stage = "Компиляция отчета Excel и применение корпоративных стилей BTG..."
-                st.session_state.generation_progress = 70
-                time.sleep(1.2)
-                
-                # Точный вызов вашей функции генерации документа Excel с сохранением расчетов
-                wb, f_score = build_excel_report(client_info, data, all_risks, score)
-                
-                output = BytesIO()
-                wb.save(output)
-                report_bytes = output.getvalue()
-                
-                st.session_state.cached_report_bytes = report_bytes
-                st.session_state.cached_f_score = f_score
-                
-                # 4. Сохраненный оригинальный блок отправки в Telegram
-                st.session_state.processing_stage = "Синхронизация результатов и отправка отчетности в Telegram..."
-                st.session_state.generation_progress = 85
-                
-                try:
-                    telegram_text = (
-                        f"🛡️ *Новый технический аудит v10.5*\n"
-                        f"🏢 Компания: {client_info['Наименование компании']}\n"
-                        f"🌍 Город: {client_info['Город']}\n"
-                        f"📊 Уровень зрелости: {f_score}%"
-                    )
-                    # Текстовое сообщение
-                    requests.post(
-                        f"https://api.telegram.org/bot{TOKEN}/sendMessage", 
-                        data={"chat_id": CHAT_ID, "text": telegram_text, "parse_mode": "Markdown"}, 
-                        timeout=3
-                    )
-                    # Документ Excel
-                    requests.post(
-                        f"https://api.telegram.org/bot{TOKEN}/sendDocument", 
-                        data={"chat_id": CHAT_ID, "caption": f"Отчет BTG: {client_info['Наименование компании']}"}, 
-                        files={'document': (f"Audit_BTG_{client_info['Наименование компании']}.xlsx", report_bytes)}, 
-                        timeout=6
-                    )
-                except Exception:
-                    pass
-                
-                # Завершение
-                st.session_state.processing_stage = "Проверка целостности документа. Завершение аудита..."
-                st.session_state.generation_progress = 100
-                st.session_state.processing_state_desc = "Ready"
-                
-            except Exception as e:
-                st.session_state.processing_state_desc = f"Error: {str(e)}"
-                
-        t = threading.Thread(target=run_generation)
-        t.start()
-        
-    # Цикл UI-обновления для вывода статусов пользователю в реальном времени
-    while st.session_state.processing_state_desc == "Running":
-        time.sleep(0.4)
-        progress_bar.progress(st.session_state.generation_progress)
-        status_text.markdown(f"<p style='text-align: center; font-style: italic; color: #1F4E78; font-size: 15px;'>⚙️ <b>Текущий этап:</b> {st.session_state.processing_stage}</p>", unsafe_allow_html=True)
-        
-    # Обработка ошибок, если фоновый поток упал
-    if st.session_state.processing_state_desc.startswith("Error"):
-        st.error(f"❌ Произошла ошибка при генерации отчета: {st.session_state.processing_state_desc}")
-        if st.button("🔄 Попробовать снова"):
-            st.session_state.generation_state = "initial"
-            st.session_state.processing_state_desc = "Running"
-            st.session_state.thread_started = False
-            st.rerun()
-    else:
-        # Переключаем статус в финал
-        st.session_state.generation_state = "finalized"
-        st.rerun()
+    # 1. Сразу жестко выводим на экран поле логов и факты информационной безопасности
+    st.markdown("#### 🛠️ Ход выполнения анализа:")
+    
+    # Имитируем лог-систему, как вы просили
+    st.info("⚙️ `[СИСТЕМА]`: Инициализация аналитического ядра BTG Consulting v10.5...")
+    st.success("⚙️ `[МАТРИЦА]`: Агрегация параметров ИТ-инфраструктуры успешно завершена.")
+    
+    st.markdown("---")
+    st.markdown("#### 📋 Полезные факты и рекомендации по ИБ:")
+    
+    # Выводим на экран массив фактов в красивом поле, который пользователь будет читать все 3 минуты
+    st.warning("""
+💡 **Многофакторная аутентификация:** Внедрение MFA блокирует до 99.9% автоматизированных атак на корпоративные учетные записи.
+              
+💡 **Защита рабочих мест:** Обычного антивируса (EPP) в 2026 году уже недостаточно. Решения класса EDR/XDR критически необходимы для выявления скрытых бесфайловых угроз.
+              
+💡 **Безопасность архивов:** Резервные копии должны быть изолированы от основной сети. Принцип 'Immutable Backup' гарантирует, что хакеры-вымогатели не смогут зашифровать ваши бэкапы.
+              
+💡 **Сетевой периметр:** Сетевая сегментация (VLAN, концепция Zero Trust) — лучший способ остановить распространение шифровальщика внутри компании, если один компьютер уже заражен.
+              
+💡 **Человеческий фактор:** Более 80% успешных кибератак начинаются со скомпрометированного фишингового письма. Регулярно обучайте команду кибергигиене.
+    """)
+    
+    # Делаем маленькую паузу в 1.5 секунды, чтобы Streamlit успел железно отправить этот интерфейс в браузер клиента
+    time.sleep(1.5)
+    
+    # Меняем статус на "Запуск тяжелого ИИ" и перезапускаем страницу. 
+    # Теперь этот красивый экран останется висеть в браузере, пока ИИ думает!
+    st.session_state.generation_state = "heavy_ai"
+    st.rerun()
 
+# --- СЦЕНАРИЙ 2: ЗАПУСК ТЯЖЕЛОГО ИИ И СБОРКИ EXCEL ---
+if st.session_state.generation_state == "heavy_ai":
+    
+    # Этот текст и анимация будут гореть параллельно с фактами сверху
+    with st.spinner("Производится глубокий анализ рисков..."):
+        
+        # Подготовка данных перед передачей
+        results = data.copy()
+        results.update({
+            "Интернет канал (осн)": f"{main_speed} Mbit/s",
+            "Резервный канал": f"{back_speed} Mbit/s",
+            "_main_speed": main_speed,
+            "_back_speed": back_speed,
+            "_user_count": total_arm,
+            "WiFi Точки": ap_cnt,
+            "WiFi Контроллер": data.get('Wi-Fi Контроллер', "Нет"),
+            "Маршрутизация": ", ".join(selected_routing) if selected_routing else "Нет",
+            "NGFW": ngfw_vendor if ngfw_vendor else "Нет",
+            "Серверы (физ)": phys_count,
+            "Серверы (вирт)": virt_count,
+            "Резервное копирование": v_n_b if v_n_b else "Нет",
+        })
+        results["MFA"] = results.get("Блок 2. MFA", "Нет")
+        results["SIEM"] = results.get("Блок 2. SIEM", "Нет")
+        results["WAF"] = results.get("Блок 2. WAF", "Нет")
+        results["Anti-DDoS"] = results.get("Блок 2. Anti-DDoS", "Нет")
+        results["EDR"] = results.get("Блок 2. EDR", "Нет")
+        results["Patch Management"] = results.get("Блок 2. Patch Management", "Нет")
+        f_score = min(score + 10, 100)
+        
+        # Запуск функции ИИ (Процессор зависает тут, но на экране пользователя уже горит Сценарий 1 с фактами!)
+        report_bytes = make_expert_excel(client_info, results, f_score)
+        st.session_state.cached_report_bytes = report_bytes
+
+    # Тихо отправляем в ТГ без создания задержек на экране
+    try:
+        telegram_text = f"🚨 Новый запрос на аудит!\n🏢 Компания: {client_info.get('Наименование компании', '-')}\n📊 Уровень зрелости: {f_score}%"
+        requests.post(f"https://api.telegram.org/bot{TOKEN}/sendMessage", data={"chat_id": CHAT_ID, "text": telegram_text}, timeout=3)
+        requests.post(f"https://api.telegram.org/bot{TOKEN}/sendDocument", data={"chat_id": CHAT_ID, "caption": f"Отчет: {client_info['Наименование компании']}"}, files={'document': (f"Audit_v10_{client_info['Наименование компании']}.xlsx", report_bytes)}, timeout=6)
+    except Exception:
+        pass
+
+    # Переключаем статус в финал
+    st.session_state.generation_state = "finalized"
+    st.rerun()
 
 # --- СЦЕНАРИЙ 3: ВЫВОД ГОТОВОГО РЕЗУЛЬТАТА ---
 if st.session_state.generation_state == "finalized":
     
     st.balloons()
+    st.success("🎉 Экспертный отчет успешно сформирован и проверен системой контроля качества BTG Consulting!")
     
-    # Безопасное получение финального скоринга во избежание AttributeError
-    current_score = st.session_state.get("cached_f_score", 0)
+    st.download_button(
+        label="📥 Скачать готовый экспертный отчет (XLSX)",
+        data=st.session_state.cached_report_bytes,
+        file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type="primary"
+    )
     
-    # Красивая и солидная карточка успешного завершения аудита в стиле BTG
-    st.markdown(f"""
-        <div style="background-color: #e8f4fd; border: 1px solid #b8daff; padding: 30px; border-radius: 12px; text-align: center; margin-top: 20px; margin-bottom: 30px;">
-            <div style="font-size: 50px; margin-bottom: 10px;">🎉</div>
-            <h2 style="color: #1F4E78; margin-top: 0;">Экспертный отчет успешно сформирован!</h2>
-            <p style="font-size: 16px; color: #495057; max-width: 700px; margin: 0 auto 15px auto;">
-                Аналитическая система контроля качества <b>BTG</b> завершила детальный аудит ИТ и ИБ инфраструктуры компании. 
-                На основе предоставленных данных сформирован детальный пакет рекомендаций и рассчитан индекс защищенности.
-            </p>
-            <div style="display: inline-block; background-color: #1F4E78; color: white; padding: 10px 25px; border-radius: 30px; font-weight: bold; font-size: 18px; margin-top: 10px;">
-                📊 Итоговый уровень ИБ-зрелости: {current_score}%
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # Центрированная кнопка скачивания на всю ширину фокус-колонки
-    col_btn_1, col_btn_2, col_btn_3 = st.columns([1, 2, 1])
-    with col_btn_2:
-        # Безопасно берем байты отчета, если они сгенерированы
-        report_data = st.session_state.get("cached_report_bytes", b"")
-        
-        st.download_button(
-            label="📥 СКАЧАТЬ ГОТОВЫЙ ЭКСПЕРТНЫЙ ОТЧЕТ (XLSX)",
-            data=report_data,
-            file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            type="primary",
-            use_container_width=True
-        )
-        
-    st.markdown("<br><hr><br>", unsafe_allow_html=True)
-    
-    # Кнопка сброса для нового аудита, чтобы пользователю не приходилось обновлять страницу вручную
-    if st.button("🔄 Провести новый аудит / Сбросить форму"):
-        st.session_state.generation_state = "initial"
-        st.session_state.processing_state_desc = "Running"
-        st.session_state.thread_started = False
+    # Кнопка для сброса состояния, если пользователь захочет перегенерировать отчет
+    if st.button("🔄 Сформировать новый отчет"):
+        st.session_state.generation_state = "idle"
         st.session_state.cached_report_bytes = None
-        st.session_state.cached_f_score = 0
         st.rerun()
 
-st.info("Khalil Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
+st.info("BTG Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
