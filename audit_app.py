@@ -1297,6 +1297,46 @@ if "generation_state" not in st.session_state:
 if "cached_report_bytes" not in st.session_state:
     st.session_state.cached_report_bytes = None
 
+st.markdown("""
+<style>
+
+.cyber-alert-box {
+    background-color: #fff8e1;
+    border: 1px solid #ffcc80;
+    color: #ef6c00;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.cyber-log-box {
+    background: #000;
+    color: #00ff66;
+    font-family: monospace;
+    padding: 15px;
+    border: 1px solid #333;
+    height: 110px;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.cyber-download-box {
+    background: #000;
+    border: 2px solid #00ff66;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,255,102,0.2);
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # --- ФИНАЛ ---
 st.divider()
 if validation_errors:
@@ -1304,7 +1344,6 @@ if validation_errors:
     for err in set(validation_errors): st.write(f"- {err}")
 
 # КНОПКА ЗАПУСКА ПРОЦЕССА
-if st.session_state.generation_state == "idle":
 # Она активна только тогда, когда процесс еще не запущен
 if st.session_state.generation_state == "idle":
     if st.button("📊 Сформировать экспертный отчет", disabled=len(validation_errors) > 0):
@@ -1312,36 +1351,7 @@ if st.session_state.generation_state == "idle":
         console_placeholder = st.empty()
         progress_bar = st.progress(0)
 
-        st.markdown("""
-        <style>
-
-        .cyber-alert-box {
-            background-color: #fff8e1;
-            border: 1px solid #ffcc80;
-            color: #ef6c00;
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        .cyber-log-box {
-            background: #000;
-            color: #00ff00;
-            font-family: monospace;
-            padding: 15px;
-            border: 1px solid #333;
-            height: 110px;
-            overflow: hidden;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            font-size: 13px;
-        }
-
-        </style>
-        """, unsafe_allow_html=True)
+        
 
         alert_placeholder.markdown("""
 
@@ -1473,6 +1483,8 @@ if st.session_state.generation_state == "heavy_ai":
         # Запуск функции ИИ (Процессор зависает тут, но на экране пользователя уже горит Сценарий 1 с фактами!)
         report_bytes = make_expert_excel(client_info, results, f_score)
         st.session_state.cached_report_bytes = report_bytes
+        st.progress(100)
+        st.success("✔️ Executive report successfully generated.")
 
     # Тихо отправляем в ТГ без создания задержек на экране
     try:
@@ -1492,18 +1504,33 @@ if st.session_state.generation_state == "finalized":
     st.balloons()
     st.success("🎉 Экспертный отчет успешно сформирован и проверен системой контроля качества BTG Consulting!")
     
-    st.download_button(
-        label="📥 Скачать готовый экспертный отчет (XLSX)",
-        data=st.session_state.cached_report_bytes,
-        file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        type="primary"
-    )
+    st.markdown("""
+<div class="cyber-download-box">
+
+<h2 style="color:#00ff66;">
+SECURITY AUDIT COMPLETE
+</h2>
+
+<p style="color:white;">
+BTG Consulting analytical engine successfully finalized the assessment.
+</p>
+
+</div>
+""", unsafe_allow_html=True)
+
+st.download_button(
+    label="📥 Скачать готовый экспертный отчет (XLSX)",
+    data=st.session_state.cached_report_bytes,
+    file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    type="primary"
+)
     
     # Кнопка для сброса состояния, если пользователь захочет перегенерировать отчет
     if st.button("🔄 Сформировать новый отчет"):
         st.session_state.generation_state = "idle"
         st.session_state.cached_report_bytes = None
+        st.session_state.pop("generation_logs", None)
         st.rerun()
 
 st.info("BTG Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
