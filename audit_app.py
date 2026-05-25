@@ -1513,7 +1513,7 @@ if st.session_state.generation_state == "heavy_ai":
 # --- СЦЕНАРИЙ 3: ВЫВОД ГОТОВОГО РЕЗУЛЬТАТА ---
 if st.session_state.generation_state == "finalized":
     
-    # Новый лаконичный блок результата
+    # Используем контейнер с рамкой
     with st.container(border=True):
         st.success("Экспертный отчет успешно сформирован")
         
@@ -1526,7 +1526,8 @@ if st.session_state.generation_state == "finalized":
             data=st.session_state.cached_report_bytes,
             file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            type="primary"
+            type="primary",
+            key="final_report_download" # <--- ВОТ ЭТО РЕШИТ ПРОБЛЕМУ
         )
 
     st.download_button(
