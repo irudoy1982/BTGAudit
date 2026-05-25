@@ -1304,6 +1304,7 @@ if validation_errors:
     for err in set(validation_errors): st.write(f"- {err}")
 
 # КНОПКА ЗАПУСКА ПРОЦЕССА
+if st.session_state.generation_state == "idle":
 # Она активна только тогда, когда процесс еще не запущен
 if st.session_state.generation_state == "idle":
     if st.button("📊 Сформировать экспертный отчет", disabled=len(validation_errors) > 0):
