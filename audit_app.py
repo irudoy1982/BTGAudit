@@ -1351,27 +1351,49 @@ if st.session_state.generation_state == "idle":
         console_placeholder = st.empty()
         progress_bar = st.progress(0)
 
-        
+        st.markdown("""
+        <style>
+
+        .cyber-alert-box {
+            background-color: #fff8e1;
+            border: 1px solid #ffcc80;
+            color: #ef6c00;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .cyber-log-box {
+            background: #000;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 15px;
+            border: 1px solid #333;
+            height: 110px;
+            overflow: hidden;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        </style>
+        """, unsafe_allow_html=True)
 
         alert_placeholder.markdown("""
 
         <div class="cyber-alert-box">
 
-    <div style="font-size:18px; margin-bottom:10px;">
-    🛡️ BTG Security Assessment Engine
-</div>
+            ⏳ Выполняется глубокий анализ инфраструктуры.<br>
+            Формирование отчета может занять до 3 минут.<br><br>
 
-<div style="font-size:14px; line-height:1.6;">
-    Выполняется комплексный анализ ИТ-инфраструктуры,<br>
-    систем информационной безопасности и уровня зрелости процессов.
+            <span style="color:red;">
+            НЕ ЗАКРЫВАЙТЕ И НЕ ОБНОВЛЯЙТЕ СТРАНИЦУ
+            </span>
 
-    <br><br>
-
-    Среднее время формирования отчета: <b>60–180 секунд</b>
-
-    <br><br>
-    <b style="color: #ff4b4b;">⚠️ Пожалуйста, не закрывайте и не обновляйте страницу до завершения процесса.</b>
-</div>
+        </div>
 
         """, unsafe_allow_html=True)
 
@@ -1385,25 +1407,20 @@ if st.session_state.generation_state == "idle":
             "Проверка backup resilience...",
             "Расчет cybersecurity maturity...",
             "Построение security domains...",
-            "Глубокий анализ рисков...",
+            "AI анализ рисков...",
             "Формирование executive summary...",
             "Генерация XLSX отчета...",
             "Финализация артефактов..."
         ]
 
         active_logs = []
-        progress = 0
-        
-        # Выносим переменные ДО цикла, чтобы они не пересоздавались каждый раз
-        log_prefixes = [
-            "[CORE]", "[SCAN]", "[MATRIX]", "[RISK]", "[ANALYTICS]", "[ENGINE]"
-        ]
 
-        # Оставляем только один цикл
+        progress = 0
+
         for step in steps:
+
             active_logs.append(
-                f"{random.choice(log_prefixes)} "
-                f"{time.strftime('%H:%M:%S')} | {step}"
+                f"[{time.strftime('%H:%M:%S')}] {step}"
             )
 
             if len(active_logs) > 4:
@@ -1417,8 +1434,10 @@ if st.session_state.generation_state == "idle":
             )
 
             progress += random.randint(5, 9)
-            progress_bar.progress(min(progress, 95))
-            time.sleep(random.uniform(0.5, 1.0))
+
+            progress_bar.progress(min(progress, 88))
+
+            time.sleep(random.uniform(0.7, 1.4))
 
 
         
@@ -1426,12 +1445,45 @@ if st.session_state.generation_state == "idle":
         st.session_state.generation_state = "preparing"
         st.rerun()
 
+# --- СЦЕНАРИЙ 1: ЭКРАН ОЖИДАНИЯ С ФАКТАМИ ИБ (Показывается СРАЗУ же после клика) ---
+if st.session_state.generation_state == "preparing":
+    
+    # 1. Сразу жестко выводим на экран поле логов и факты информационной безопасности
+    st.markdown("#### 🛠️ Ход выполнения анализа:")
+    
+    # Имитируем лог-систему, как вы просили
+    st.info("⚙️ `[СИСТЕМА]`: Инициализация аналитического ядра Khalil Consulting v10.5...")
+    st.success("⚙️ `[МАТРИЦА]`: Агрегация параметров ИТ-инфраструктуры успешно завершена.")
+    
+    st.markdown("---")
+    st.markdown("#### 📋 Полезные факты и рекомендации по ИБ:")
+    
+    # Выводим на экран массив фактов в красивом поле, который пользователь будет читать все 3 минуты
+    st.warning("""
+💡 **Многофакторная аутентификация:** Внедрение MFA блокирует до 99.9% автоматизированных атак на корпоративные учетные записи.
+              
+💡 **Защита рабочих мест:** Обычного антивируса (EPP) в 2026 году уже недостаточно. Решения класса EDR/XDR критически необходимы для выявления скрытых бесфайловых угроз.
+              
+💡 **Безопасность архивов:** Резервные копии должны быть изолированы от основной сети. Принцип 'Immutable Backup' гарантирует, что хакеры-вымогатели не смогут зашифровать ваши бэкапы.
+              
+💡 **Сетевой периметр:** Сетевая сегментация (VLAN, концепция Zero Trust) — лучший способ остановить распространение шифровальщика внутри компании, если один компьютер уже заражен.
+              
+💡 **Человеческий фактор:** Более 80% успешных кибератак начинаются со скомпрометированного фишингового письма. Регулярно обучайте команду кибергигиене.
+    """)
+    
+    # Делаем маленькую паузу в 1.5 секунды, чтобы Streamlit успел железно отправить этот интерфейс в браузер клиента
+    time.sleep(1.5)
+    
+    # Меняем статус на "Запуск тяжелого ИИ" и перезапускаем страницу. 
+    # Теперь этот красивый экран останется висеть в браузере, пока ИИ думает!
+    st.session_state.generation_state = "heavy_ai"
+    st.rerun()
 
 # --- СЦЕНАРИЙ 2: ЗАПУСК ТЯЖЕЛОГО ИИ И СБОРКИ EXCEL ---
 if st.session_state.generation_state == "heavy_ai":
     
     # Этот текст и анимация будут гореть параллельно с фактами сверху
-    with st.spinner("Корреляция инфраструктурных данных и построение рекомендаций безопасности..."):
+    with st.spinner("🤖 ИИ (Gemini API) сопоставляет ваши данные с требованиями ISO 27001 / NIST и генерирует рекомендации..."):
         
         # Подготовка данных перед передачей
         results = data.copy()
@@ -1460,8 +1512,6 @@ if st.session_state.generation_state == "heavy_ai":
         # Запуск функции ИИ (Процессор зависает тут, но на экране пользователя уже горит Сценарий 1 с фактами!)
         report_bytes = make_expert_excel(client_info, results, f_score)
         st.session_state.cached_report_bytes = report_bytes
-        st.progress(100)
-        st.success("✔️ Executive report successfully generated.")
 
     # Тихо отправляем в ТГ без создания задержек на экране
     try:
@@ -1477,27 +1527,22 @@ if st.session_state.generation_state == "heavy_ai":
 
 # --- СЦЕНАРИЙ 3: ВЫВОД ГОТОВОГО РЕЗУЛЬТАТА ---
 if st.session_state.generation_state == "finalized":
-    # Контейнер для чистого визуального оформления
-    with st.container(border=True):
-        st.success("Экспертный отчет успешно сформирован")
-        st.subheader("Security Audit Complete")
-        st.write("Аналитический движок BTG Consulting успешно завершил оценку безопасности. Отчет готов к загрузке.")
-        
-        # Кнопка с уникальным ключом, чтобы избежать ошибки дублирования
-        st.download_button(
-            label="📥 Скачать готовый экспертный отчет (XLSX)",
-            data=st.session_state.cached_report_bytes,
-            file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            type="primary",
-            key="unique_report_download_button_001" 
-        )
+    
+    st.balloons()
+    st.success("🎉 Экспертный отчет успешно сформирован и проверен системой контроля качества Khalil Consulting!")
+    
+    st.download_button(
+        label="📥 Скачать готовый экспертный отчет (XLSX)",
+        data=st.session_state.cached_report_bytes,
+        file_name=f"Audit_Khalil_{client_info['Наименование компании']}.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type="primary"
+    )
     
     # Кнопка для сброса состояния, если пользователь захочет перегенерировать отчет
     if st.button("🔄 Сформировать новый отчет"):
         st.session_state.generation_state = "idle"
         st.session_state.cached_report_bytes = None
-        st.session_state.pop("generation_logs", None)
         st.rerun()
 
-st.info("BTG Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
+st.info("Khalil Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
