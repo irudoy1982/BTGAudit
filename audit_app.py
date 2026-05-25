@@ -1569,6 +1569,9 @@ if st.session_state.generation_state == "finalized":
     
     st.balloons()
     
+    # Безопасное получение финального скоринга во избежание AttributeError
+    current_score = st.session_state.get("cached_f_score", 0)
+    
     # Красивая и солидная карточка успешного завершения аудита в стиле BTG
     st.markdown(f"""
         <div style="background-color: #e8f4fd; border: 1px solid #b8daff; padding: 30px; border-radius: 12px; text-align: center; margin-top: 20px; margin-bottom: 30px;">
@@ -1579,7 +1582,7 @@ if st.session_state.generation_state == "finalized":
                 На основе предоставленных данных сформирован детальный пакет рекомендаций и рассчитан индекс защищенности.
             </p>
             <div style="display: inline-block; background-color: #1F4E78; color: white; padding: 10px 25px; border-radius: 30px; font-weight: bold; font-size: 18px; margin-top: 10px;">
-                📊 Итоговый уровень ИБ-зрелости: {st.session_state.cached_f_score}%
+                📊 Итоговый уровень ИБ-зрелости: {current_score}%
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -1587,9 +1590,12 @@ if st.session_state.generation_state == "finalized":
     # Центрированная кнопка скачивания на всю ширину фокус-колонки
     col_btn_1, col_btn_2, col_btn_3 = st.columns([1, 2, 1])
     with col_btn_2:
+        # Безопасно берем байты отчета, если они сгенерированы
+        report_data = st.session_state.get("cached_report_bytes", b"")
+        
         st.download_button(
             label="📥 СКАЧАТЬ ГОТОВЫЙ ЭКСПЕРТНЫЙ ОТЧЕТ (XLSX)",
-            data=st.session_state.cached_report_bytes,
+            data=report_data,
             file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             type="primary",
