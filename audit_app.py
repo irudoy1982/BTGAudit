@@ -293,7 +293,7 @@ CHAT_ID = st.secrets.get("TELEGRAM_CHAT_ID")
 if os.path.exists("logo.png"):
     st.image("logo.png", width=300)
 else:
-    st.title("Khalil Trade IT Audit & Consulting")
+    st.title("BTG IT Audit & Consulting")
 
 st.markdown("### Мы поможем Вам стать лучше!")
 st.divider()
@@ -1412,7 +1412,7 @@ if st.session_state.generation_state == "preparing":
     st.markdown("#### 🛠️ Ход выполнения анализа:")
     
     # Имитируем лог-систему, как вы просили
-    st.info("⚙️ `[СИСТЕМА]`: Инициализация аналитического ядра Khalil Consulting v10.5...")
+    st.info("⚙️ `[СИСТЕМА]`: Инициализация аналитического ядра BTG Consulting v10.5...")
     st.success("⚙️ `[МАТРИЦА]`: Агрегация параметров ИТ-инфраструктуры успешно завершена.")
     
     st.markdown("---")
@@ -1489,12 +1489,12 @@ if st.session_state.generation_state == "heavy_ai":
 if st.session_state.generation_state == "finalized":
     
     st.balloons()
-    st.success("🎉 Экспертный отчет успешно сформирован и проверен системой контроля качества Khalil Consulting!")
+    st.success("🎉 Экспертный отчет успешно сформирован и проверен системой контроля качества BTG Consulting!")
     
     st.download_button(
         label="📥 Скачать готовый экспертный отчет (XLSX)",
         data=st.session_state.cached_report_bytes,
-        file_name=f"Audit_Khalil_{client_info['Наименование компании']}.xlsx",
+        file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         type="primary"
     )
@@ -1505,4 +1505,4 @@ if st.session_state.generation_state == "finalized":
         st.session_state.cached_report_bytes = None
         st.rerun()
 
-st.info("Khalil Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
+st.info("BTG Audit System v10.5 | Ivan Rudoy Production | Almaty 2026")
