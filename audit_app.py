@@ -1518,7 +1518,7 @@ BTG Consulting analytical engine successfully finalized the assessment.
 </div>
 """, unsafe_allow_html=True)
 
-st.download_button(
+    st.download_button(
     label="📥 Скачать готовый экспертный отчет (XLSX)",
     data=st.session_state.cached_report_bytes,
     file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
