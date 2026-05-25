@@ -1399,35 +1399,37 @@ if st.session_state.generation_state == "idle":
 
         for step in steps:
 
-log_prefixes = [
-    "[CORE]",
-    "[SCAN]",
-    "[MATRIX]",
-    "[RISK]",
-    "[ANALYTICS]",
-    "[ENGINE]"
-]
+        log_prefixes = [
+            "[CORE]",
+            "[SCAN]",
+            "[MATRIX]",
+            "[RISK]",
+            "[ANALYTICS]",
+            "[ENGINE]"
+        ]
 
-active_logs.append(
-    f"{random.choice(log_prefixes)} "
-    f"{time.strftime('%H:%M:%S')} | {step}"
-)
+        for step in steps:
 
-        if len(active_logs) > 4:
-            active_logs.pop(0)
+            active_logs.append(
+                f"{random.choice(log_prefixes)} "
+                f"{time.strftime('%H:%M:%S')} | {step}"
+            )
 
-        console_placeholder.markdown(
-            '<div class="cyber-log-box">' +
-            "".join([f'<div>▶ {line}</div>' for line in active_logs]) +
-            '</div>',
-            unsafe_allow_html=True
-        )
+            if len(active_logs) > 4:
+                active_logs.pop(0)
 
-        progress += random.randint(5, 9)
+            console_placeholder.markdown(
+                '<div class="cyber-log-box">' +
+                "".join([f'<div>▶ {line}</div>' for line in active_logs]) +
+                '</div>',
+                unsafe_allow_html=True
+            )
 
-        progress_bar.progress(min(progress, 88))
+            progress += random.randint(5, 9)
 
-        time.sleep(random.uniform(0.7, 1.4))
+            progress_bar.progress(min(progress, 88))
+
+            time.sleep(random.uniform(0.6, 1.4))
 
 
         
