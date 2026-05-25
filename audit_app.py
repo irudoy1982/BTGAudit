@@ -1394,22 +1394,15 @@ if st.session_state.generation_state == "idle":
         ]
 
         active_logs = []
-
         progress = 0
-
-        for step in steps:
-
+        
+        # Выносим переменные ДО цикла, чтобы они не пересоздавались каждый раз
         log_prefixes = [
-            "[CORE]",
-            "[SCAN]",
-            "[MATRIX]",
-            "[RISK]",
-            "[ANALYTICS]",
-            "[ENGINE]"
+            "[CORE]", "[SCAN]", "[MATRIX]", "[RISK]", "[ANALYTICS]", "[ENGINE]"
         ]
 
+        # Оставляем только один цикл
         for step in steps:
-
             active_logs.append(
                 f"{random.choice(log_prefixes)} "
                 f"{time.strftime('%H:%M:%S')} | {step}"
@@ -1426,10 +1419,8 @@ if st.session_state.generation_state == "idle":
             )
 
             progress += random.randint(5, 9)
-
-            progress_bar.progress(min(progress, 88))
-
-            time.sleep(random.uniform(0.6, 1.4))
+            progress_bar.progress(min(progress, 95))
+            time.sleep(random.uniform(0.5, 1.0))
 
 
         
