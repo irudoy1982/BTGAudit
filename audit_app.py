@@ -1358,21 +1358,19 @@ if st.session_state.generation_state == "idle":
         <div class="cyber-alert-box">
 
     <div style="font-size:18px; margin-bottom:10px;">
-        🛡️ BTG Security Assessment Engine
-    </div>
+    🛡️ BTG Security Assessment Engine
+</div>
 
-    <div style="font-size:14px; line-height:1.6;">
+<div style="font-size:14px; line-height:1.6;">
+    Выполняется комплексный анализ ИТ-инфраструктуры,<br>
+    систем информационной безопасности и уровня зрелости процессов.
 
-        Выполняется комплексный анализ ИТ-инфраструктуры,<br>
-        систем информационной безопасности и уровня зрелости процессов.
+    <br><br>
 
-        <br><br>
+    Среднее время формирования отчета: <b>60–180 секунд</b>
 
-        Среднее время формирования executive-отчета:
-        <b>60–180 секунд</b>
-
-    </div>
-
+    <br><br>
+    <b style="color: #ff4b4b;">⚠️ Пожалуйста, не закрывайте и не обновляйте страницу до завершения процесса.</b>
 </div>
 
         """, unsafe_allow_html=True)
