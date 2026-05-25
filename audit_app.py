@@ -1512,31 +1512,21 @@ if st.session_state.generation_state == "heavy_ai":
 
 # --- СЦЕНАРИЙ 3: ВЫВОД ГОТОВОГО РЕЗУЛЬТАТА ---
 if st.session_state.generation_state == "finalized":
-    
-    # Используем контейнер с рамкой
+    # Контейнер для чистого визуального оформления
     with st.container(border=True):
         st.success("Экспертный отчет успешно сформирован")
-        
         st.subheader("Security Audit Complete")
-        
         st.write("Аналитический движок BTG Consulting успешно завершил оценку безопасности. Отчет готов к загрузке.")
         
+        # Кнопка с уникальным ключом, чтобы избежать ошибки дублирования
         st.download_button(
             label="📥 Скачать готовый экспертный отчет (XLSX)",
             data=st.session_state.cached_report_bytes,
             file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             type="primary",
-            key="final_report_download" # <--- ВОТ ЭТО РЕШИТ ПРОБЛЕМУ
+            key="unique_report_download_button_001" 
         )
-
-    st.download_button(
-    label="📥 Скачать готовый экспертный отчет (XLSX)",
-    data=st.session_state.cached_report_bytes,
-    file_name=f"Audit_BTG_{client_info['Наименование компании']}.xlsx",
-    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    type="primary"
-)
     
     # Кнопка для сброса состояния, если пользователь захочет перегенерировать отчет
     if st.button("🔄 Сформировать новый отчет"):
